@@ -513,6 +513,7 @@ static char * getJwt(ngx_http_request_t *r, ngx_str_t auth_jwt_validation_type)
 	ngx_table_elt_t *authorizationHeader;
 	char* jwtPtr = NULL;
 	ngx_str_t jwtCookieVal;
+    //ngx_str_t jwtQueryVal;
 	ngx_int_t n;
 	ngx_int_t bearer_length;
 	ngx_str_t authorizationHeaderStr;
@@ -540,6 +541,13 @@ static char * getJwt(ngx_http_request_t *r, ngx_str_t auth_jwt_validation_type)
 			}
 		}
 	}
+    else if (auth_jwt_validation_type.len > sizeof("QUERY=") && ngx_strncmp(auth_jwt_validation_type.data, "QUERY=", sizeof("QUERY=") - 1)==0)
+    {
+        auth_jwt_validation_type.data += sizeof("QUERY=") - 1;
+        auth_jwt_validation_type.len -= sizeof("QUERY=") - 1;
+
+        ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "request uri is : %s", r->uri);
+    }
 	else if (auth_jwt_validation_type.len > sizeof("COOKIE=") && ngx_strncmp(auth_jwt_validation_type.data, "COOKIE=", sizeof("COOKIE=") - 1)==0)
 	{
 		auth_jwt_validation_type.data += sizeof("COOKIE=") - 1;

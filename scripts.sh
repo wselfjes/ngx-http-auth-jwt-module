@@ -20,6 +20,7 @@ all() {
 fetch_headers() {
 	printf "${BLUE} Fetching NGINX headers...${NC}"
 	local files='src/core/ngx_core.h src/http/ngx_http.h'
+  mkdir -p src/lib
 
 	for f in ${files}; do
 		curl "https://raw.githubusercontent.com/nginx/nginx/release-${NGINX_VERSION}/${f}" -o src/lib/$(basename ${f})

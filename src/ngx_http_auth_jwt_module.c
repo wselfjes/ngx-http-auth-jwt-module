@@ -16,7 +16,6 @@
 
 #include "ngx_http_auth_jwt_header_processing.h"
 #include "ngx_http_auth_jwt_binary_converters.h"
-#include "ngx_http_auth_jwt_query_processing.h"
 #include "ngx_http_auth_jwt_string.h"
 
 #include <stdio.h>
@@ -547,12 +546,9 @@ static char * getJwt(ngx_http_request_t *r, ngx_str_t auth_jwt_validation_type)
         auth_jwt_validation_type.data += sizeof("QUERY=") - 1;
         auth_jwt_validation_type.len -= sizeof("QUERY=") - 1;
 
-        ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0,  "http thread: \"%V?%V\"", &r->uri, &r->args);
-
-
-        // get value from query
-        n = get_value_from_query(r, &auth_jwt_validation_type, &jwtQueryVal);
-        if (n != NGX_ERROR)
+        // get the value from query
+        n = ngx_http_arg(r, auth_jwt_validation_type.data, auth_jwt_validation_type.len, &jwtQueryVal);
+        if (n != NGX_DECLINED)
         {
             jwtPtr = ngx_str_t_to_char_ptr(r->pool, jwtQueryVal);
         }
@@ -560,7 +556,6 @@ static char * getJwt(ngx_http_request_t *r, ngx_str_t auth_jwt_validation_type)
         {
             ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "error get value from query param");
         }
-
     }
 	else if (auth_jwt_validation_type.len > sizeof("COOKIE=") && ngx_strncmp(auth_jwt_validation_type.data, "COOKIE=", sizeof("COOKIE=") - 1)==0)
 	{

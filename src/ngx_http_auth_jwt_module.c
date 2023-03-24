@@ -528,11 +528,13 @@ static char * getJwt(ngx_http_request_t *r, ngx_str_t auth_jwt_validation_type)
 		{
 			ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "Found authorization header len %d", authorizationHeader->value.len);
 
-			bearer_length = authorizationHeader->value.len - (sizeof("Bearer ") - 1);
+            // TODO use config: AUTHORIZATION=prefix
+            bearer_length = authorizationHeader->value.len - (sizeof("token ") - 1);
 
 			if (bearer_length > 0) 
 			{
-				authorizationHeaderStr.data = authorizationHeader->value.data + sizeof("Bearer ") - 1;
+                // TODO use config: AUTHORIZATION=prefix
+				authorizationHeaderStr.data = authorizationHeader->value.data + sizeof("token ") - 1;
 				authorizationHeaderStr.len = bearer_length;
 
 				jwtPtr = ngx_str_t_to_char_ptr(r->pool, authorizationHeaderStr);

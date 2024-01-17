@@ -10,7 +10,7 @@ services:
       args:
         BASE_IMAGE: ${FULL_IMAGE_NAME}:${NGINX_VERSION:-latest}
     logging:
-      driver: ${LOG_DRIVER:-journald}
+      driver: ${LOG_DRIVER:-}
 
   runner:
     container_name: ${CONTAINER_NAME_PREFIX}-runner
